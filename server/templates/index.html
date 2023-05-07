@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      background-color: #222;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root" class="flex flex-col h-screen"></div>
+
+  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.14.7/babel.min.js"></script>
+  <script type="text/babel">
+    // Chatbot component
+    function Chatbot() {
+      const [chatHistory, setChatHistory] = React.useState([]);
+      const [inputValue, setInputValue] = React.useState('');
+      const [isLoading, setIsLoading] = React.useState(false);
+
+      function handleInputChange(event) {
+        setInputValue(event.target.value);
+      }
+
+      function handleKeyDown(event) {
+        debugger
+        if (event.key === "Enter") {
+          if (!event.shiftKey) {
+            event.preventDefault();
+            handleSendMessage();
+          }
+        }
+      };
+
+
+      function handleSendMessage(event) {
+        event?.preventDefault();
+        const message = inputValue.trim();
+        if (message !== '') {
+          addChatMessage(message, 'user');
+          setInputValue('');
+          sendMessageToBackend(message);
+        }
+      }
+
+      function addChatMessage(message, sender) {
+        setChatHistory(prevChatHistory => [
+          ...prevChatHistory,
+          { message, sender }
+        ]);
+      }
+
+      async function sendMessageToBackend(message) {
+        try {
+          setIsLoading(true);
+
+          const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const botResponse = data.response;
+            addChatMessage(botResponse, 'chatbot');
+          } else {
+            console.error('Error:', response.status);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      return (
+        <div className="flex-grow flex flex-col justify-end">
+          <div id="chat-history" className="chat-history flex-grow-0 bg-gray-800 px-4 py-2">
+            {chatHistory.map(({ message, sender }, index) => (
+              <p
+                key={index}
+                className={`text-sm mb-2 p-2 rounded-lg ${sender === 'user' ? 'text-right text-blue-300' : 'text-left text-white'}`}
+              >
+                {message}
+              </p>
+            ))}
+
+            {isLoading && (
+              <div className="flex items-center justify-center mt-4">
+                <div className="loader ease-linear rounded-full border-4 border-t-4 border-white h-6 w-6 mr-3"></div>
+                <span className="text-white">Loading...</span>
+              </div>
+            )}
+          </div>
+          <form id="chat-form" className="bg-gray-900 p-4">
+            <div className="chat-input-container  w-screen flex">
+              <textarea
+                id="chat-input"
+                className="chat-input rounded-lg p-2 mr-2 resize-none bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500  w-screen"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message..."
+                rows="2"
+                required
+              ></textarea>
+              <button
+                id="send-button"
+                className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg"
+                type="submit"
+                onClick={handleSendMessage}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      );
+    }
+
+    // Render the Chatbot component
+    ReactDOM.render(<Chatbot />, document.getElementById('root'));
+  </script>
+</body>
+
+</html>
