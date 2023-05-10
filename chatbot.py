@@ -13,4 +13,7 @@ while True:
     spinner.start()
     response = palm.chat(messages=input_msg)
     spinner.stop()
+    if not response.last:
+        print("CLAI> Sorry, I couldn't fetch a response for that.")
+        continue
     print(response.last + "\n")
