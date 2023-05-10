@@ -1,5 +1,5 @@
-# LinguaCLI
-> Chatbot using PaLM API
+# PaLM-CLI-Bot
+> CLI Chatbot using PaLM API
 
 This is a simple chatbot script that utilizes the Pathways Language Model (PaLM) library from Google Generative AI. The script prompts the user for input, sends the input to the PaLM API for processing, and prints the response.
 
