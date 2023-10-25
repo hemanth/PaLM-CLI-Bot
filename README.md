@@ -32,3 +32,7 @@ Contributions are welcome! If you find any issues or want to add new features, p
 
 This project is licensed under the [MIT License](LICENSE).
 
+## DEMO
+<video src="./CIAI.mp4" controls="controls" style="max-width: 730px;">
+</video>
+
