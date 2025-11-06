@@ -3,6 +3,9 @@
 
 This is a simple chatbot script that utilizes the Pathways Language Model (PaLM) library from Google Generative AI. The script prompts the user for input, sends the input to the PaLM API for processing, and prints the response.
 
+https://github.com/user-attachments/assets/adf45421-ed49-48c4-ad73-2ae7b0a2acd1
+
+
 ## Prerequisites
 
 Before running this script, make sure you have the following:
